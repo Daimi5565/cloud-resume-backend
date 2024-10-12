@@ -1,0 +1,5 @@
+﻿NAME,TYPE,LOCATION,
+"ASP-saadCanadaCentral-8d1e","App Service plan","Canada Central"
+"saadcanadacentral","Application Insights","Canada Central"
+"saadcanadacentral","Storage account","Canada Central"
+"saadCanadaCentral","Function App","Canada Central"
