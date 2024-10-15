@@ -1,6 +1,7 @@
 import azure.functions as func
 import logging
 import json
+import os  # Add this import for using os.environ
 from azure.cosmos import CosmosClient, exceptions
 
 # Initialize CosmosDB client with your specific details
