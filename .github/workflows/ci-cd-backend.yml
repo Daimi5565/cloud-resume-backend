@@ -1,29 +1,43 @@
-name: Python package
+name: CI/CD Backend
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.12'  # Adjust to the Python version you are using
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install pytest
+        python -m pip install --upgrade pip
+        pip install -r MyFunction/requirements.txt
+
+    - name: Set environment variables
+      run: |
+        echo "COSMOS_DB_ENDPOINT=${{ secrets.COSMOS_DB_ENDPOINT }}" >> $GITHUB_ENV
+        echo "COSMOS_DB_KEY=${{ secrets.COSMOS_DB_KEY }}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
-        source venv/bin/activate
-        cd MyFunction/test
+        cd MyFunction
         pytest
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy ARM Template
+      run: |
+        az deployment group create --resource-group ResourceWaqas --template-file Infrastructure/merged_template.json --parameters Infrastructure/merged_parameters.json
