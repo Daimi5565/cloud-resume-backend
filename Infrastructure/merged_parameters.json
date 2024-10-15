@@ -1,0 +1,16 @@
+{
+  "parameters": {
+    "databaseAccounts_saaddb_name": {
+      "value": null
+    },
+    "sites_saadCanadaCentral_name": {
+      "value": null
+    },
+    "serverfarms_ASP_saadCanadaCentral_8d1e_externalid": {
+      "value": null
+    },
+    "storageAccounts_saadalicanadacentral_name": {
+      "value": null
+    }
+  }
+}
