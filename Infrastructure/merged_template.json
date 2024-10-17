@@ -1,582 +1,699 @@
-{
-  "resources": [
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2024-05-15",
-      "name": "[parameters('databaseAccounts_saaddb_name')]",
-      "location": "Canada Central",
-      "tags": {
-        "defaultExperience": "Core (SQL)",
-        "hidden-cosmos-mmspecial": ""
+[
+  {
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "databaseAccounts_saaddatabase_name": {
+        "defaultValue": "saaddatabase",
+        "type": "String"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts",
+        "apiVersion": "2024-05-15",
+        "name": "[parameters('databaseAccounts_saaddatabase_name')]",
+        "location": "Canada Central",
+        "tags": {
+          "defaultExperience": "Core (SQL)",
+          "hidden-cosmos-mmspecial": ""
+        },
+        "kind": "GlobalDocumentDB",
+        "identity": {
+          "type": "None"
+        },
+        "properties": {
+          "publicNetworkAccess": "Enabled",
+          "enableAutomaticFailover": false,
+          "enableMultipleWriteLocations": false,
+          "isVirtualNetworkFilterEnabled": false,
+          "virtualNetworkRules": [],
+          "disableKeyBasedMetadataWriteAccess": false,
+          "enableFreeTier": false,
+          "enableAnalyticalStorage": false,
+          "analyticalStorageConfiguration": {
+            "schemaType": "WellDefined"
+          },
+          "databaseAccountOfferType": "Standard",
+          "defaultIdentity": "FirstPartyIdentity",
+          "networkAclBypass": "None",
+          "disableLocalAuth": false,
+          "enablePartitionMerge": false,
+          "enableBurstCapacity": false,
+          "minimalTlsVersion": "Tls12",
+          "consistencyPolicy": {
+            "defaultConsistencyLevel": "Session",
+            "maxIntervalInSeconds": 5,
+            "maxStalenessPrefix": 100
+          },
+          "locations": [
+            {
+              "locationName": "Canada Central",
+              "failoverPriority": 0,
+              "isZoneRedundant": true
+            }
+          ],
+          "cors": [
+            {
+              "allowedOrigins": "https://www.saadali.site"
+            }
+          ],
+          "capabilities": [
+            {
+              "name": "EnableServerless"
+            }
+          ],
+          "ipRules": [],
+          "backupPolicy": {
+            "type": "Periodic",
+            "periodicModeProperties": {
+              "backupIntervalInMinutes": 240,
+              "backupRetentionIntervalInHours": 8,
+              "backupStorageRedundancy": "Geo"
+            }
+          },
+          "networkAclBypassResourceIds": [],
+          "capacity": {
+            "totalThroughputLimit": 4000
+          }
+        }
       },
-      "kind": "GlobalDocumentDB",
-      "identity": {
-        "type": "None"
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+        "apiVersion": "2024-05-15",
+        "name": "[concat(parameters('databaseAccounts_saaddatabase_name'), '/saaddb')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
+        ],
+        "properties": {
+          "resource": {
+            "id": "saaddb"
+          }
+        }
       },
-      "properties": {
-        "publicNetworkAccess": "Enabled",
-        "enableAutomaticFailover": false,
-        "enableMultipleWriteLocations": false,
-        "isVirtualNetworkFilterEnabled": false,
-        "virtualNetworkRules": [],
-        "disableKeyBasedMetadataWriteAccess": false,
-        "enableFreeTier": false,
-        "enableAnalyticalStorage": false,
-        "analyticalStorageConfiguration": {
-          "schemaType": "WellDefined"
-        },
-        "databaseAccountOfferType": "Standard",
-        "defaultIdentity": "FirstPartyIdentity",
-        "networkAclBypass": "None",
-        "disableLocalAuth": false,
-        "enablePartitionMerge": false,
-        "enableBurstCapacity": false,
-        "minimalTlsVersion": "Tls12",
-        "consistencyPolicy": {
-          "defaultConsistencyLevel": "Session",
-          "maxIntervalInSeconds": 5,
-          "maxStalenessPrefix": 100
-        },
-        "locations": [
-          {
-            "locationName": "Canada Central",
-            "failoverPriority": 0,
-            "isZoneRedundant": true
-          }
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
+        "apiVersion": "2024-05-15",
+        "name": "[concat(parameters('databaseAccounts_saaddatabase_name'), '/00000000-0000-0000-0000-000000000001')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
         ],
-        "cors": [],
-        "capabilities": [
-          {
-            "name": "EnableServerless"
-          }
+        "properties": {
+          "roleName": "Cosmos DB Built-in Data Reader",
+          "type": "BuiltInRole",
+          "assignableScopes": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
+          ],
+          "permissions": [
+            {
+              "dataActions": [
+                "Microsoft.DocumentDB/databaseAccounts/readMetadata",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read"
+              ],
+              "notDataActions": []
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
+        "apiVersion": "2024-05-15",
+        "name": "[concat(parameters('databaseAccounts_saaddatabase_name'), '/00000000-0000-0000-0000-000000000002')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
         ],
-        "ipRules": [],
-        "backupPolicy": {
-          "type": "Periodic",
-          "periodicModeProperties": {
-            "backupIntervalInMinutes": 240,
-            "backupRetentionIntervalInHours": 8,
-            "backupStorageRedundancy": "Geo"
+        "properties": {
+          "roleName": "Cosmos DB Built-in Data Contributor",
+          "type": "BuiltInRole",
+          "assignableScopes": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
+          ],
+          "permissions": [
+            {
+              "dataActions": [
+                "Microsoft.DocumentDB/databaseAccounts/readMetadata",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*",
+                "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*"
+              ],
+              "notDataActions": []
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+        "apiVersion": "2024-05-15",
+        "name": "[concat(parameters('databaseAccounts_saaddatabase_name'), '/saaddb/counter')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('databaseAccounts_saaddatabase_name'), 'saaddb')]",
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddatabase_name'))]"
+        ],
+        "properties": {
+          "resource": {
+            "id": "counter",
+            "indexingPolicy": {
+              "indexingMode": "consistent",
+              "automatic": true,
+              "includedPaths": [
+                {
+                  "path": "/*"
+                }
+              ],
+              "excludedPaths": [
+                {
+                  "path": "/\"_etag\"/?"
+                }
+              ]
+            },
+            "partitionKey": {
+              "paths": [
+                "/id"
+              ],
+              "kind": "Hash",
+              "version": 2
+            },
+            "uniqueKeyPolicy": {
+              "uniqueKeys": []
+            },
+            "conflictResolutionPolicy": {
+              "mode": "LastWriterWins",
+              "conflictResolutionPath": "/_ts"
+            },
+            "computedProperties": []
           }
-        },
-        "networkAclBypassResourceIds": [],
-        "capacity": {
-          "totalThroughputLimit": 4000
         }
       }
+    ]
+  },
+  {
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "sites_SAADCanadaCentral_name": {
+        "defaultValue": "SAADCanadaCentral",
+        "type": "String"
+      },
+      "serverfarms_ASP_SAADCanadaCentral_7ec7_externalid": {
+        "defaultValue": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/ResourceSaad/providers/Microsoft.Web/serverfarms/ASP-SAADCanadaCentral-7ec7",
+        "type": "String"
+      }
     },
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
-      "apiVersion": "2024-05-15",
-      "name": "[concat(parameters('databaseAccounts_saaddb_name'), '/', parameters('databaseAccounts_saaddb_name'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
-      ],
-      "properties": {
-        "resource": {
-          "id": "saaddb"
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2023-12-01",
+        "name": "[parameters('sites_SAADCanadaCentral_name')]",
+        "location": "Canada Central",
+        "tags": {
+          "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/ResourceSaad/providers/microsoft.insights/components/saadcanadacentral",
+          "hidden-link: /app-insights-instrumentation-key": "f32f69be-cc20-4a17-b500-8754985fb564",
+          "hidden-link: /app-insights-conn-string": "InstrumentationKey=f32f69be-cc20-4a17-b500-8754985fb564;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=e00bf752-5b38-4c30-a0c2-c8b6a4694fcc"
+        },
+        "kind": "functionapp,linux",
+        "properties": {
+          "enabled": true,
+          "hostNameSslStates": [
+            {
+              "name": "saadcanadacentral.azurewebsites.net",
+              "sslState": "Disabled",
+              "hostType": "Standard"
+            },
+            {
+              "name": "saadcanadacentral.scm.azurewebsites.net",
+              "sslState": "Disabled",
+              "hostType": "Repository"
+            }
+          ],
+          "serverFarmId": "[parameters('serverfarms_ASP_SAADCanadaCentral_7ec7_externalid')]",
+          "reserved": true,
+          "isXenon": false,
+          "hyperV": false,
+          "dnsConfiguration": {},
+          "vnetRouteAllEnabled": false,
+          "vnetImagePullEnabled": false,
+          "vnetContentShareEnabled": false,
+          "siteConfig": {
+            "numberOfWorkers": 1,
+            "linuxFxVersion": "Python|3.11",
+            "acrUseManagedIdentityCreds": false,
+            "alwaysOn": false,
+            "http20Enabled": false,
+            "functionAppScaleLimit": 200,
+            "minimumElasticInstanceCount": 0
+          },
+          "scmSiteAlsoStopped": false,
+          "clientAffinityEnabled": false,
+          "clientCertEnabled": false,
+          "clientCertMode": "Required",
+          "hostNamesDisabled": false,
+          "vnetBackupRestoreEnabled": false,
+          "customDomainVerificationId": "53E858D53BAED752CC8299931C24CA9AE6EAAF9FE9CC66FD4BEB05AF45CFF064",
+          "containerSize": 0,
+          "dailyMemoryTimeQuota": 0,
+          "httpsOnly": false,
+          "redundancyMode": "None",
+          "storageAccountRequired": false,
+          "keyVaultReferenceIdentity": "SystemAssigned"
         }
-      }
-    },
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
-      "apiVersion": "2024-05-15",
-      "name": "[concat(parameters('databaseAccounts_saaddb_name'), '/00000000-0000-0000-0000-000000000001')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
-      ],
-      "properties": {
-        "roleName": "Cosmos DB Built-in Data Reader",
-        "type": "BuiltInRole",
-        "assignableScopes": [
-          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
+      },
+      {
+        "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+        "apiVersion": "2023-12-01",
+        "name": "[concat(parameters('sites_SAADCanadaCentral_name'), '/ftp')]",
+        "location": "Canada Central",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_SAADCanadaCentral_name'))]"
         ],
-        "permissions": [
-          {
-            "dataActions": [
-              "Microsoft.DocumentDB/databaseAccounts/readMetadata",
-              "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery",
-              "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed",
-              "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read"
-            ],
-            "notDataActions": []
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions",
-      "apiVersion": "2024-05-15",
-      "name": "[concat(parameters('databaseAccounts_saaddb_name'), '/00000000-0000-0000-0000-000000000002')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
-      ],
-      "properties": {
-        "roleName": "Cosmos DB Built-in Data Contributor",
-        "type": "BuiltInRole",
-        "assignableScopes": [
-          "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
+        "tags": {
+          "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/ResourceSaad/providers/microsoft.insights/components/saadcanadacentral",
+          "hidden-link: /app-insights-instrumentation-key": "f32f69be-cc20-4a17-b500-8754985fb564",
+          "hidden-link: /app-insights-conn-string": "InstrumentationKey=f32f69be-cc20-4a17-b500-8754985fb564;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=e00bf752-5b38-4c30-a0c2-c8b6a4694fcc"
+        },
+        "properties": {
+          "allow": true
+        }
+      },
+      {
+        "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+        "apiVersion": "2023-12-01",
+        "name": "[concat(parameters('sites_SAADCanadaCentral_name'), '/scm')]",
+        "location": "Canada Central",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_SAADCanadaCentral_name'))]"
         ],
-        "permissions": [
-          {
-            "dataActions": [
-              "Microsoft.DocumentDB/databaseAccounts/readMetadata",
-              "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*",
-              "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*"
+        "tags": {
+          "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/ResourceSaad/providers/microsoft.insights/components/saadcanadacentral",
+          "hidden-link: /app-insights-instrumentation-key": "f32f69be-cc20-4a17-b500-8754985fb564",
+          "hidden-link: /app-insights-conn-string": "InstrumentationKey=f32f69be-cc20-4a17-b500-8754985fb564;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=e00bf752-5b38-4c30-a0c2-c8b6a4694fcc"
+        },
+        "properties": {
+          "allow": true
+        }
+      },
+      {
+        "type": "Microsoft.Web/sites/config",
+        "apiVersion": "2023-12-01",
+        "name": "[concat(parameters('sites_SAADCanadaCentral_name'), '/web')]",
+        "location": "Canada Central",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_SAADCanadaCentral_name'))]"
+        ],
+        "tags": {
+          "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/ResourceSaad/providers/microsoft.insights/components/saadcanadacentral",
+          "hidden-link: /app-insights-instrumentation-key": "f32f69be-cc20-4a17-b500-8754985fb564",
+          "hidden-link: /app-insights-conn-string": "InstrumentationKey=f32f69be-cc20-4a17-b500-8754985fb564;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=e00bf752-5b38-4c30-a0c2-c8b6a4694fcc"
+        },
+        "properties": {
+          "numberOfWorkers": 1,
+          "defaultDocuments": [
+            "Default.htm",
+            "Default.html",
+            "Default.asp",
+            "index.htm",
+            "index.html",
+            "iisstart.htm",
+            "default.aspx",
+            "index.php"
+          ],
+          "netFrameworkVersion": "v4.0",
+          "linuxFxVersion": "Python|3.11",
+          "requestTracingEnabled": false,
+          "remoteDebuggingEnabled": false,
+          "httpLoggingEnabled": false,
+          "acrUseManagedIdentityCreds": false,
+          "logsDirectorySizeLimit": 35,
+          "detailedErrorLoggingEnabled": false,
+          "publishingUsername": "$SAADCanadaCentral",
+          "scmType": "None",
+          "use32BitWorkerProcess": false,
+          "webSocketsEnabled": false,
+          "alwaysOn": false,
+          "managedPipelineMode": "Integrated",
+          "virtualApplications": [
+            {
+              "virtualPath": "/",
+              "physicalPath": "site\\wwwroot",
+              "preloadEnabled": false
+            }
+          ],
+          "loadBalancing": "LeastRequests",
+          "experiments": {
+            "rampUpRules": []
+          },
+          "autoHealEnabled": false,
+          "vnetRouteAllEnabled": false,
+          "vnetPrivatePortsCount": 0,
+          "cors": {
+            "allowedOrigins": [
+              "https://www.saadali.site"
             ],
-            "notDataActions": []
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
-      "apiVersion": "2024-05-15",
-      "name": "[concat(parameters('databaseAccounts_saaddb_name'), '/', parameters('databaseAccounts_saaddb_name'), '/counter')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', parameters('databaseAccounts_saaddb_name'), parameters('databaseAccounts_saaddb_name'))]",
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_saaddb_name'))]"
-      ],
-      "properties": {
-        "resource": {
-          "id": "counter",
-          "indexingPolicy": {
-            "indexingMode": "consistent",
-            "automatic": true,
-            "includedPaths": [
+            "supportCredentials": false
+          },
+          "localMySqlEnabled": false,
+          "ipSecurityRestrictions": [
+            {
+              "ipAddress": "Any",
+              "action": "Allow",
+              "priority": 2147483647,
+              "name": "Allow all",
+              "description": "Allow all access"
+            }
+          ],
+          "scmIpSecurityRestrictions": [
+            {
+              "ipAddress": "Any",
+              "action": "Allow",
+              "priority": 2147483647,
+              "name": "Allow all",
+              "description": "Allow all access"
+            }
+          ],
+          "scmIpSecurityRestrictionsUseMain": false,
+          "http20Enabled": false,
+          "minTlsVersion": "1.2",
+          "scmMinTlsVersion": "1.2",
+          "ftpsState": "FtpsOnly",
+          "preWarmedInstanceCount": 0,
+          "functionAppScaleLimit": 200,
+          "functionsRuntimeScaleMonitoringEnabled": false,
+          "minimumElasticInstanceCount": 0,
+          "azureStorageAccounts": {}
+        }
+      },
+      {
+        "type": "Microsoft.Web/sites/functions",
+        "apiVersion": "2023-12-01",
+        "name": "[concat(parameters('sites_SAADCanadaCentral_name'), '/http_triggersaadali')]",
+        "location": "Canada Central",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_SAADCanadaCentral_name'))]"
+        ],
+        "properties": {
+          "script_href": "https://saadcanadacentral.azurewebsites.net/admin/vfs/home/site/wwwroot/function_app.py",
+          "test_data_href": "https://saadcanadacentral.azurewebsites.net/admin/vfs/tmp/FunctionsData/http_triggersaadali.dat",
+          "href": "https://saadcanadacentral.azurewebsites.net/admin/functions/http_triggersaadali",
+          "config": {
+            "name": "http_triggersaadali",
+            "entryPoint": "http_triggersaadali",
+            "scriptFile": "function_app.py",
+            "language": "python",
+            "functionDirectory": "/home/site/wwwroot",
+            "bindings": [
               {
-                "path": "/*"
-              }
-            ],
-            "excludedPaths": [
+                "direction": "IN",
+                "type": "httpTrigger",
+                "name": "req",
+                "authLevel": "FUNCTION",
+                "route": "http_triggersaadali"
+              },
               {
-                "path": "/\"_etag\"/?"
+                "direction": "OUT",
+                "type": "http",
+                "name": "$return"
               }
             ]
           },
-          "partitionKey": {
-            "paths": [
-              "/id"
-            ],
-            "kind": "Hash",
-            "version": 2
-          },
-          "uniqueKeyPolicy": {
-            "uniqueKeys": []
-          },
-          "conflictResolutionPolicy": {
-            "mode": "LastWriterWins",
-            "conflictResolutionPath": "/_ts"
-          },
-          "computedProperties": []
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2023-12-01",
-      "name": "[parameters('sites_saadCanadaCentral_name')]",
-      "location": "Canada Central",
-      "tags": {
-        "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/saadcanadacentral/providers/microsoft.insights/components/saadcanadacentral",
-        "hidden-link: /app-insights-instrumentation-key": "f75d2642-f840-4c1d-977a-c62565effffe",
-        "hidden-link: /app-insights-conn-string": "InstrumentationKey=f75d2642-f840-4c1d-977a-c62565effffe;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=93efd821-5f2e-40cd-a0b7-8f0993033fd9"
-      },
-      "kind": "functionapp,linux",
-      "properties": {
-        "enabled": true,
-        "hostNameSslStates": [
-          {
-            "name": "saadcanadacentral.azurewebsites.net",
-            "sslState": "Disabled",
-            "hostType": "Standard"
-          },
-          {
-            "name": "saadcanadacentral.scm.azurewebsites.net",
-            "sslState": "Disabled",
-            "hostType": "Repository"
-          }
-        ],
-        "serverFarmId": "[parameters('serverfarms_ASP_saadCanadaCentral_8d1e_externalid')]",
-        "reserved": true,
-        "isXenon": false,
-        "hyperV": false,
-        "dnsConfiguration": {},
-        "vnetRouteAllEnabled": false,
-        "vnetImagePullEnabled": false,
-        "vnetContentShareEnabled": false,
-        "siteConfig": {
-          "numberOfWorkers": 1,
-          "linuxFxVersion": "Python|3.11",
-          "acrUseManagedIdentityCreds": false,
-          "alwaysOn": false,
-          "http20Enabled": false,
-          "functionAppScaleLimit": 200,
-          "minimumElasticInstanceCount": 0
-        },
-        "scmSiteAlsoStopped": false,
-        "clientAffinityEnabled": false,
-        "clientCertEnabled": false,
-        "clientCertMode": "Required",
-        "hostNamesDisabled": false,
-        "vnetBackupRestoreEnabled": false,
-        "customDomainVerificationId": "53E858D53BAED752CC8299931C24CA9AE6EAAF9FE9CC66FD4BEB05AF45CFF064",
-        "containerSize": 0,
-        "dailyMemoryTimeQuota": 0,
-        "httpsOnly": false,
-        "redundancyMode": "None",
-        "storageAccountRequired": false,
-        "keyVaultReferenceIdentity": "SystemAssigned"
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-      "apiVersion": "2023-12-01",
-      "name": "[concat(parameters('sites_saadCanadaCentral_name'), '/ftp')]",
-      "location": "Canada Central",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_saadCanadaCentral_name'))]"
-      ],
-      "tags": {
-        "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/saadcanadacentral/providers/microsoft.insights/components/saadcanadacentral",
-        "hidden-link: /app-insights-instrumentation-key": "f75d2642-f840-4c1d-977a-c62565effffe",
-        "hidden-link: /app-insights-conn-string": "InstrumentationKey=f75d2642-f840-4c1d-977a-c62565effffe;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=93efd821-5f2e-40cd-a0b7-8f0993033fd9"
-      },
-      "properties": {
-        "allow": true
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-      "apiVersion": "2023-12-01",
-      "name": "[concat(parameters('sites_saadCanadaCentral_name'), '/scm')]",
-      "location": "Canada Central",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_saadCanadaCentral_name'))]"
-      ],
-      "tags": {
-        "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/saadcanadacentral/providers/microsoft.insights/components/saadcanadacentral",
-        "hidden-link: /app-insights-instrumentation-key": "f75d2642-f840-4c1d-977a-c62565effffe",
-        "hidden-link: /app-insights-conn-string": "InstrumentationKey=f75d2642-f840-4c1d-977a-c62565effffe;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=93efd821-5f2e-40cd-a0b7-8f0993033fd9"
-      },
-      "properties": {
-        "allow": true
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2023-12-01",
-      "name": "[concat(parameters('sites_saadCanadaCentral_name'), '/web')]",
-      "location": "Canada Central",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_saadCanadaCentral_name'))]"
-      ],
-      "tags": {
-        "hidden-link: /app-insights-resource-id": "/subscriptions/5e7dee80-e445-486a-b749-2a2e6f43e1fb/resourceGroups/saadcanadacentral/providers/microsoft.insights/components/saadcanadacentral",
-        "hidden-link: /app-insights-instrumentation-key": "f75d2642-f840-4c1d-977a-c62565effffe",
-        "hidden-link: /app-insights-conn-string": "InstrumentationKey=f75d2642-f840-4c1d-977a-c62565effffe;IngestionEndpoint=https://canadacentral-1.in.applicationinsights.azure.com/;LiveEndpoint=https://canadacentral.livediagnostics.monitor.azure.com/;ApplicationId=93efd821-5f2e-40cd-a0b7-8f0993033fd9"
-      },
-      "properties": {
-        "numberOfWorkers": 1,
-        "defaultDocuments": [
-          "Default.htm",
-          "Default.html",
-          "Default.asp",
-          "index.htm",
-          "index.html",
-          "iisstart.htm",
-          "default.aspx",
-          "index.php"
-        ],
-        "netFrameworkVersion": "v4.0",
-        "linuxFxVersion": "Python|3.11",
-        "requestTracingEnabled": false,
-        "remoteDebuggingEnabled": false,
-        "httpLoggingEnabled": false,
-        "acrUseManagedIdentityCreds": false,
-        "logsDirectorySizeLimit": 35,
-        "detailedErrorLoggingEnabled": false,
-        "publishingUsername": "$saadCanadaCentral",
-        "scmType": "None",
-        "use32BitWorkerProcess": false,
-        "webSocketsEnabled": false,
-        "alwaysOn": false,
-        "managedPipelineMode": "Integrated",
-        "virtualApplications": [
-          {
-            "virtualPath": "/",
-            "physicalPath": "site\\wwwroot",
-            "preloadEnabled": false
-          }
-        ],
-        "loadBalancing": "LeastRequests",
-        "experiments": {
-          "rampUpRules": []
-        },
-        "autoHealEnabled": false,
-        "vnetRouteAllEnabled": false,
-        "vnetPrivatePortsCount": 0,
-        "cors": {
-          "allowedOrigins": [
-            "https://www.saadali.site",
-            "*"
-          ],
-          "supportCredentials": false
-        },
-        "localMySqlEnabled": false,
-        "ipSecurityRestrictions": [
-          {
-            "ipAddress": "Any",
-            "action": "Allow",
-            "priority": 2147483647,
-            "name": "Allow all",
-            "description": "Allow all access"
-          }
-        ],
-        "scmIpSecurityRestrictions": [
-          {
-            "ipAddress": "Any",
-            "action": "Allow",
-            "priority": 2147483647,
-            "name": "Allow all",
-            "description": "Allow all access"
-          }
-        ],
-        "scmIpSecurityRestrictionsUseMain": false,
-        "http20Enabled": false,
-        "minTlsVersion": "1.2",
-        "scmMinTlsVersion": "1.2",
-        "ftpsState": "FtpsOnly",
-        "preWarmedInstanceCount": 0,
-        "functionAppScaleLimit": 200,
-        "functionsRuntimeScaleMonitoringEnabled": false,
-        "minimumElasticInstanceCount": 0,
-        "azureStorageAccounts": {}
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/functions",
-      "apiVersion": "2023-12-01",
-      "name": "[concat(parameters('sites_saadCanadaCentral_name'), '/http_triggersaad')]",
-      "location": "Canada Central",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_saadCanadaCentral_name'))]"
-      ],
-      "properties": {
-        "script_href": "https://saadcanadacentral.azurewebsites.net/admin/vfs/home/site/wwwroot/function_app.py",
-        "test_data_href": "https://saadcanadacentral.azurewebsites.net/admin/vfs/tmp/FunctionsData/http_triggersaad.dat",
-        "href": "https://saadcanadacentral.azurewebsites.net/admin/functions/http_triggersaad",
-        "config": {
-          "name": "http_triggersaad",
-          "entryPoint": "http_triggersaad",
-          "scriptFile": "function_app.py",
+          "invoke_url_template": "https://saadcanadacentral.azurewebsites.net/api/http_triggersaadali",
           "language": "python",
-          "functionDirectory": "/home/site/wwwroot",
-          "bindings": [
-            {
-              "direction": "IN",
-              "type": "httpTrigger",
-              "name": "req",
-              "authLevel": "FUNCTION",
-              "route": "http_triggersaad"
-            },
-            {
-              "direction": "OUT",
-              "type": "http",
-              "name": "$return"
-            }
-          ]
-        },
-        "invoke_url_template": "https://saadcanadacentral.azurewebsites.net/api/http_triggersaad",
-        "language": "python",
-        "isDisabled": false
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites/hostNameBindings",
-      "apiVersion": "2023-12-01",
-      "name": "[concat(parameters('sites_saadCanadaCentral_name'), '/', parameters('sites_saadCanadaCentral_name'), '.azurewebsites.net')]",
-      "location": "Canada Central",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_saadCanadaCentral_name'))]"
-      ],
-      "properties": {
-        "siteName": "saadCanadaCentral",
-        "hostNameType": "Verified"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2023-05-01",
-      "name": "[parameters('storageAccounts_saadalicanadacentral_name')]",
-      "location": "canadacentral",
-      "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
+          "isDisabled": false
+        }
       },
-      "kind": "Storage",
-      "properties": {
-        "defaultToOAuthAuthentication": true,
-        "allowCrossTenantReplication": false,
-        "minimumTlsVersion": "TLS1_0",
-        "allowBlobPublicAccess": false,
-        "networkAcls": {
-          "bypass": "AzureServices",
-          "virtualNetworkRules": [],
-          "ipRules": [],
-          "defaultAction": "Allow"
+      {
+        "type": "Microsoft.Web/sites/hostNameBindings",
+        "apiVersion": "2023-12-01",
+        "name": "[concat(parameters('sites_SAADCanadaCentral_name'), '/', parameters('sites_SAADCanadaCentral_name'), '.azurewebsites.net')]",
+        "location": "Canada Central",
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/sites', parameters('sites_SAADCanadaCentral_name'))]"
+        ],
+        "properties": {
+          "siteName": "SAADCanadaCentral",
+          "hostNameType": "Verified"
+        }
+      }
+    ]
+  },
+  {
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "storageAccounts_saadstoragee_name": {
+        "defaultValue": "saadstoragee",
+        "type": "String"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2023-05-01",
+        "name": "[parameters('storageAccounts_saadstoragee_name')]",
+        "location": "canadacentral",
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
         },
-        "supportsHttpsTrafficOnly": true,
-        "encryption": {
-          "services": {
-            "file": {
-              "keyType": "Account",
-              "enabled": true
-            },
-            "blob": {
-              "keyType": "Account",
-              "enabled": true
-            }
+        "kind": "StorageV2",
+        "properties": {
+          "dnsEndpointType": "Standard",
+          "defaultToOAuthAuthentication": false,
+          "publicNetworkAccess": "Enabled",
+          "allowCrossTenantReplication": false,
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": true,
+          "largeFileSharesState": "Enabled",
+          "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
           },
-          "keySource": "Microsoft.Storage"
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "requireInfrastructureEncryption": false,
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot",
+          "customDomain": {
+            "name": "www.saadali.site"
+          }
         }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
       },
-      "properties": {
-        "cors": {
-          "corsRules": []
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
         },
-        "deleteRetentionPolicy": {
-          "allowPermanentDelete": false,
-          "enabled": false
+        "properties": {
+          "containerDeleteRetentionPolicy": {
+            "enabled": true,
+            "days": 7
+          },
+          "cors": {
+            "corsRules": []
+          },
+          "deleteRetentionPolicy": {
+            "allowPermanentDelete": false,
+            "enabled": true,
+            "days": 7
+          }
         }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/fileServices",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
       },
-      "properties": {
-        "protocolSettings": {
-          "smb": {}
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
         },
-        "cors": {
-          "corsRules": []
-        },
-        "shareDeleteRetentionPolicy": {
-          "enabled": true,
-          "days": 7
+        "properties": {
+          "protocolSettings": {
+            "smb": {}
+          },
+          "cors": {
+            "corsRules": []
+          },
+          "shareDeleteRetentionPolicy": {
+            "enabled": true,
+            "days": 7
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/queueServices",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "cors": {
+            "corsRules": []
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/tableServices",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "cors": {
+            "corsRules": []
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/$web')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/azure-webjobs-hosts')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/azure-webjobs-secrets')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/scm-releases')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "None"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/saadcanadacentral56bdfe')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/saadcanadacentral98fd57')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/saadcanadacentrald25b7d')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+        "apiVersion": "2023-05-01",
+        "name": "[concat(parameters('storageAccounts_saadstoragee_name'), '/default/saadcanadacentralef71fd')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_saadstoragee_name'), 'default')]",
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadstoragee_name'))]"
+        ],
+        "properties": {
+          "accessTier": "TransactionOptimized",
+          "shareQuota": 102400,
+          "enabledProtocols": "SMB"
         }
       }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/queueServices",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "cors": {
-          "corsRules": []
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/tableServices",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "cors": {
-          "corsRules": []
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default/azure-webjobs-hosts')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadalicanadacentral_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "immutableStorageWithVersioning": {
-          "enabled": false
-        },
-        "defaultEncryptionScope": "$account-encryption-key",
-        "denyEncryptionScopeOverride": false,
-        "publicAccess": "None"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default/azure-webjobs-secrets')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadalicanadacentral_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "immutableStorageWithVersioning": {
-          "enabled": false
-        },
-        "defaultEncryptionScope": "$account-encryption-key",
-        "denyEncryptionScopeOverride": false,
-        "publicAccess": "None"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default/scm-releases')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_saadalicanadacentral_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "immutableStorageWithVersioning": {
-          "enabled": false
-        },
-        "defaultEncryptionScope": "$account-encryption-key",
-        "denyEncryptionScopeOverride": false,
-        "publicAccess": "None"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
-      "apiVersion": "2023-05-01",
-      "name": "[concat(parameters('storageAccounts_saadalicanadacentral_name'), '/default/', parameters('storageAccounts_saadalicanadacentral_name'), 'faad1d')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_saadalicanadacentral_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_saadalicanadacentral_name'))]"
-      ],
-      "properties": {
-        "accessTier": "TransactionOptimized",
-        "shareQuota": 102400,
-        "enabledProtocols": "SMB"
-      }
-    }
-  ]
-}
+    ]
+  }
+]
