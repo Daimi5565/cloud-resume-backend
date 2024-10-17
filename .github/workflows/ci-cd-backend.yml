@@ -25,12 +25,12 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "COSMOS_DB_ENDPOINT=${{ secrets.COSMOS_DB_ENDPOINT }}" >> $GITHUB_ENV
-        echo "COSMOS_DB_KEY=${{ secrets.COSMOS_DB_KEY }}" >> $GITHUB_ENV
+        echo "COSMOSDB_ENDPOINT=${{ secrets.COSMOSDB_ENDPOINT }}" >> $GITHUB_ENV
+        echo "COSMOSDB_KEY=${{ secrets.COSMOSDB_KEY }}" >> $GITHUB_ENV
 
     - name: Run tests
       run: |
-        cd MyFunction
+        cd MyFunction/test
         pytest
 
     - name: Azure Login
@@ -40,4 +40,4 @@ jobs:
 
     - name: Deploy ARM Template
       run: |
-        az deployment group create --resource-group saad-crc --template-file Infrastructure/merged_template.json --parameters Infrastructure/merged_parameters.json
+        az deployment group validate --resource-group ResourceSaad --template-file Infrastructure/merged_template.json --parameters Infrastructure/merged_parameters.json
