@@ -1,12 +1,16 @@
 import azure.functions as func
 import logging
 import json
-import os  # Add this import for using os.environ
+import os
 from azure.cosmos import CosmosClient, exceptions
 
-# Initialize CosmosDB client with your specific details
-endpoint = os.environ.get("COSMOS_DB_ENDPOINT")
-key = os.environ.get("COSMOS_DB_KEY")
+# Fetch CosmosDB client details from environment variables
+endpoint = os.environ.get("COSMOSDB_ENDPOINT")
+key = os.environ.get("COSMOSDB_KEY")
+
+# Debugging: Print environment variables
+print("COSMOSDB_ENDPOINT:", endpoint)
+print("COSMOSDB_KEY:", key)
 database_name = "saaddb"
 container_name = "counter"
 
@@ -16,8 +20,8 @@ container = database.get_container_client(container_name)
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
-@app.route(route="http_triggersaad")
-def http_triggersaad(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="http_triggersaadali")
+def http_triggersaadali(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     # Initialize visitor count variable
@@ -62,4 +66,3 @@ def http_triggersaad(req: func.HttpRequest) -> func.HttpResponse:
             status_code=200,
             mimetype="application/json"
         )
-
