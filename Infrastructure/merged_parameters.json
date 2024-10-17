@@ -1,32 +1,18 @@
-[
-  {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "databaseAccounts_saaddatabase_name": {
-        "value": null
-      }
-    }
-  },
-  {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "sites_SAADCanadaCentral_name": {
-        "value": null
-      },
-      "serverfarms_ASP_SAADCanadaCentral_7ec7_externalid": {
-        "value": null
-      }
-    }
-  },
-  {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "storageAccounts_saadstoragee_name": {
-        "value": null
-      }
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "databaseAccounts_saaddatabase_name": {
+      "value": null
+    },
+    "sites_SAADCanadaCentral_name": {
+      "value": null
+    },
+    "serverfarms_ASP_SAADCanadaCentral_7ec7_externalid": {
+      "value": null
+    },
+    "storageAccounts_saadstoragee_name": {
+      "value": null
     }
   }
-]
+}
